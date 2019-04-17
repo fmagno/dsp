@@ -1,6 +1,6 @@
 [campaign]
     name = 'cpn_atlantic'
-    dir = '/Users/fmagno/projs/sipLab/2019_oceantech/campaigns/2019.04.15/dsp_proj/'
+    dir = './'
 
 [[experiments]]
     priority = 2
