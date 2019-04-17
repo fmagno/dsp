@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+# -*- coding: future_fstrings -*-
+
+"""Calculates the minimum frequency required to avoid superposition
+    between the direct path wave and the reflected wave with the shortest path
+
+                          -\                       ^  
+                        -/| -\                     |  
+                      -/  |   -\                   |  
+                    -/    |     -\                 |  
+         X        -/      |       -\               |  
+                -/        |         -\    X        | D
+              -/          |           -\           |  
+            -/            |             -\         |  
+          -/              |               -\       |  
+        -/            +---|                 -\     |  
+      -/              |   |                   -\   |  
+    -/                |   |                     -  v  
+                                                      
+    <------------------------------------------->     
+                        L
+"""
+
+from dsp.tools import geom2freq
+from optparse import OptionParser
+
+
+
+def argument_parser():
+    parser = OptionParser(usage="%prog: [options]")
+
+    parser.add_option(
+        "-l", "--length", dest="length", type="float", default="60e-2",
+        help="Set length between transmitter and receiver [default=%default]")
+
+    parser.add_option(
+        "-d", "--dist-wall", dest="dist_wall", type="float", default="60e-2",
+        help="Set shorter distance between a wall and the line that intersects the transmitter and the receiver [default=%default]")
+
+    parser.add_option(
+        "-n", "--ncycles", dest="ncycles", type="int", default="10",
+        help="Set the number of periods that comprise the pulse [default=%default]")
+
+    parser.add_option(
+        "-v", "--vel-water", dest="vel_water", type="float", default="1498",
+        help="Set the speed of acoustic waves underwater [default=%default]")
+
+
+    return parser
+
+options, _ = argument_parser().parse_args()
+
+fmin = geom2freq(
+    options.dist_wall,
+    options.length,
+    options.ncycles,
+    options.vel_water,
+)
+print(f'Freq min: {fmin}')
