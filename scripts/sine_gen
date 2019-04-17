@@ -1,0 +1,83 @@
+#!/usr/bin/env python
+# -*- coding: future_fstrings -*-
+""" """
+
+import os
+import errno
+import numpy as np
+from optparse import OptionParser
+
+from dsp.signals.gr_sine_gen import main, gr_sine_gen
+from dsp.tools import mkdir_p
+
+
+
+def argument_parser():
+    parser = OptionParser(usage="%prog: [options]")
+
+    parser.add_option(
+        # "-o", "--dir-name", dest="dir_name", type="string", default="./",
+        "-o", "--dir-name", dest="dir_name", type="string", default='./',
+        help="Set the output folder [default=%default]")
+
+    parser.add_option(
+        "-p", "--pwm-freq", dest="pwm_freq", type="float", default="100.",
+        help="Set the PWM frequency [default=%default]")
+
+    parser.add_option(
+        "-n", "--ncycles", dest="ncycles", type="int", default="10",
+        help="Set the number of signal periods in a pulse [default=%default]")
+
+    parser.add_option(
+        "-u", "--npulses", dest="npulses", type="int", default="10",
+        help="Set the number of PWM periods [default=%default]")
+
+    parser.add_option(
+        "-r", "--sample-rate", dest="samp_rate", type="int", default="250000",
+        help="Set the number of samples per second [default=%default]")
+
+    parser.add_option(
+        "-a", "--amplitude", dest="sig_amp", type="float", default="1.",
+        help="Set the signal amplitude [default=%default]")
+
+    parser.add_option(
+        "-t", "--first-frequency", dest="first_freq", type="float", default="10000.",
+        help="Set the first signal frequency of the set [default=%default]")
+
+    parser.add_option(
+        "-s", "--frequency-step", dest="freq_step", type="float", default="10000.",
+        help="Set the step of frequency set [default=%default]")
+
+    parser.add_option(
+        "-l", "--last-frequency", dest="last_freq", type="float", default="100000.",
+        help="Set the last signal frequency of the set [default=%default]")
+
+    parser.add_option(
+        "-f", "--signal-frequency", dest="sig_freq", type="float", default=None,
+        help="Set the frequency of the signal [default=%default]")
+
+    parser.add_option(
+        "-d", "--padding", dest="padding", type="float", default=0,
+        help="The signal is set to zero during this amount of time before the first pulse [default=%default]")
+
+    parser.add_option(
+        "-j", "--prefix", dest="prefix", type="string", default='',
+        help="Set prefix [default=%default]")
+
+    return parser
+
+params, _ = argument_parser().parse_args()
+
+mkdir_p(params.dir_name)
+
+if params.sig_freq is not None:
+    freqs = [params.sig_freq]
+else:
+    step = params.freq_step
+    first = params.first_freq
+    last = params.last_freq
+    freqs = np.arange(first, last+step, step)
+for sf in freqs:
+    params.sig_freq = sf
+    main(gr_sine_gen, params)
+
