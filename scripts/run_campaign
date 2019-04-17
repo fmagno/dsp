@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+# -*- coding: future_fstrings -*-
+""" """
+from pprint import pprint
+from optparse import OptionParser
+
+from dsp.campaign import Campaign
+
+def argument_parser():
+    parser = OptionParser(usage="%prog: [options]")
+
+    parser.add_option(
+        "-i", "--config", dest="config", type="string", default='./config.ini',
+        help="Set the campaign parameters with a config file. All other parameters will be ignored [default=%default]")
+
+    return parser
+
+# Get parameters
+in_params, _ = argument_parser().parse_args()
+
+# cp = Campaign('/Users/fmagno/projs/sipLab/2019_oceantech/campaigns/2019.04.15/dsp_proj/config_v2.ini')
+cp = Campaign(in_params.config)
+# import pdb; pdb.set_trace()
+experiments_sorted = sorted(cp.data['experiments'], key=lambda x: x['priority'])
+for exp in experiments_sorted:
+    cp.activate_experiment(exp)
+    cp.gen_signals()
+    cp.begin_trans()
