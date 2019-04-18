@@ -1,24 +1,42 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """ """
+
 import platform
 if platform.system() == 'Darwin':
     import matplotlib
     matplotlib.use('TkAgg')
 
 import numpy as np
+from optparse import OptionParser
 import matplotlib.pyplot as plt
 import sys
 
+def argument_parser():
+    parser = OptionParser(usage="%prog: [options]")
 
-fs = float(sys.argv[1].split('r')[-1].split('_')[0])
+    parser.add_option(
+        "-r", "--samp_rate", dest="samp_rate", type="float", default=250000.,
+        help="Set sample rate [default=%default]")
 
-for arg in sys.argv[1:]:
+    parser.add_option(
+        "-i", "--input-signals", dest="input_signals", type="string", default='./in.dat',
+        help="Set input signals list [default=%default]")
 
-    f = open(arg, 'rb')
+
+    return parser
+
+# Get parameters
+in_params, _ = argument_parser().parse_args()
+
+fs = in_params.samp_rate
+
+# for arg in sys.argv[1:]:
+for sig in in_params.input_signals.split(','):
+
+    f = open(sig, 'rb')
     data = np.fromfile(f, dtype='float32')
-
     t = np.arange(len(data))/fs
-
 
     plt.plot(t, data)
 plt.show()
