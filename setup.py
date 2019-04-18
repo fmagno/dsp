@@ -26,5 +26,6 @@ setup(
         'scripts/sig_viewer',
         'scripts/sine_gen',
         'scripts/run_campaign',
+        'scripts/baseband_async_oii',
     ]
 )
