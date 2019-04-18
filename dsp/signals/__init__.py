@@ -60,7 +60,6 @@ def gen_sine(*args, **kwargs):
                 fd.write(toml.dumps(status))
                 fd.truncate()
 
-    print('Signals generated!!!')
 
 
 def generate_signals(*args, **kwargs):

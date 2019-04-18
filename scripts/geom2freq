@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: future_fstrings -*-
 
 """Calculates the minimum frequency required to avoid superposition
     between the direct path wave and the reflected wave with the shortest path
@@ -56,4 +55,4 @@ fmin = geom2freq(
     options.ncycles,
     options.vel_water,
 )
-print(f'Freq min: {fmin}')
+print('Freq min:', fmin)

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """Useful tools"""
 import errno
 import math
@@ -47,5 +46,5 @@ def mkdir_p(dirname):
 
 if __name__ == '__main__':
     fmin = geom2freq(D=200e-2, L=60e-2, ncycles=10.)
-    print(f'freq min: {fmin}')
+    print('freq min:', fmin)
 

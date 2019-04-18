@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: future_fstrings -*-
 """ """
-from pprint import pprint
 from optparse import OptionParser
 
 from dsp.campaign import Campaign
