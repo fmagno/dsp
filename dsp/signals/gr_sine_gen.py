@@ -6,7 +6,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Gr Sine Gen
-# Generated: Wed Apr 17 22:05:10 2019
+# Generated: Thu Apr 18 11:44:01 2019
 # GNU Radio version: 3.7.12.0
 ##################################################
 
@@ -213,7 +213,7 @@ def argument_parser():
         "-u", "--npulses", dest="npulses", type="intx", default=10,
         help="Set number of pulses [default=%default]")
     parser.add_option(
-        "-d", "--post-padding", dest="post_padding", type="intx", default=0,
+        "-b", "--post-padding", dest="post_padding", type="intx", default=0,
         help="Set post padding [default=%default]")
     parser.add_option(
         "-d", "--pre-padding", dest="pre_padding", type="intx", default=0,
