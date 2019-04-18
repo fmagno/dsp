@@ -1,3 +1,4 @@
 *.dat
 *.pyc
 .vscode/
+vendor/
