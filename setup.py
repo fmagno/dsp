@@ -16,16 +16,15 @@ setup(
     author_email='flmagnom@gmail.com',
     packages=find_packages(),
     install_requires=[
-        'future-fstrings',
-        'matplotlib',
-        'numpy',
-        'toml',
-        'namedlist',
+        'matplotlib==2.1.0',
+        'numpy==1.16.2',
+        'toml==0.10.0',
+        'namedlist==1.7.0',
     ],
     scripts=[
         'scripts/geom2freq',
         'scripts/sig_viewer',
         'scripts/sine_gen',
-        'scripts/run_xp',
+        'scripts/run_campaign',
     ]
 )
