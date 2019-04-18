@@ -56,8 +56,13 @@ def argument_parser():
         help="Set the frequency of the signal [default=%default]")
 
     parser.add_option(
-        "-d", "--padding", dest="padding", type="float", default=0,
-        help="The signal is set to zero during this amount of time before the first pulse [default=%default]")
+        "-d", "--pre_padding", dest="pre_padding", type="float", default=0,
+        help="The signal is set to zero during this amount of samples before the first pulse [default=%default]")
+
+    parser.add_option(
+        "-b", "--post_padding", dest="post_padding", type="float", default=0,
+        help="The signal is set to zero during this amount of samples after the last pulse [default=%default]")
+
 
     parser.add_option(
         "-j", "--prefix", dest="prefix", type="string", default='',
