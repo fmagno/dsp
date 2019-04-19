@@ -27,5 +27,6 @@ setup(
         'scripts/sine_gen',
         'scripts/run_campaign',
         'scripts/baseband_async_oii',
+        'scripts/passband_async_oi',
     ]
 )
