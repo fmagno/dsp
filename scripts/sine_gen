@@ -32,7 +32,7 @@ def argument_parser():
         help="Set the number of PWM periods [default=%default]")
 
     parser.add_option(
-        "-r", "--sample-rate", dest="samp_rate", type="int", default="250000",
+        "-r", "--sample-rate", dest="samp_rate", type="float", default="250000",
         help="Set the number of samples per second [default=%default]")
 
     parser.add_option(
@@ -56,11 +56,11 @@ def argument_parser():
         help="Set the frequency of the signal [default=%default]")
 
     parser.add_option(
-        "-d", "--pre_padding", dest="pre_padding", type="float", default=0,
+        "-d", "--pre_padding", dest="pre_padding", type="int", default=0,
         help="The signal is set to zero during this amount of samples before the first pulse [default=%default]")
 
     parser.add_option(
-        "-b", "--post_padding", dest="post_padding", type="float", default=0,
+        "-b", "--post_padding", dest="post_padding", type="int", default=0,
         help="The signal is set to zero during this amount of samples after the last pulse [default=%default]")
 
 
