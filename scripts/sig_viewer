@@ -9,52 +9,126 @@ if platform.system() == 'Darwin':
 
 import numpy as np
 from optparse import OptionParser
+import argparse
+from scipy import signal
 import matplotlib.pyplot as plt
 import sys
 
+
+
 def argument_parser():
-    parser = OptionParser(usage="%prog: [options]")
+    # parser = OptionParser(usage="%prog: [options]")
+    parser = argparse.ArgumentParser(description='Signal visualiser.')
+    parser.add_argument(
+        "-r", "--samp_rate",
+        dest="samp_rate",
+        type=float,
+        default=250000.,
+        help="Set sample rate [default=%%default]")
 
-    parser.add_option(
-        "-r", "--samp_rate", dest="samp_rate", type="float", default=250000.,
-        help="Set sample rate [default=%default]")
+    parser.add_argument(
+        "-i", "--input-signals",
+        dest="input_signals",
+        type=str,
+        default='./in.dat',
+        nargs='+',
+        help="Set input signals list [default=%%default]")
 
-    parser.add_option(
-        "-i", "--input-signals", dest="input_signals", type="string", default='./in.dat',
-        help="Set input signals list [default=%default]")
+    parser.add_argument(
+        "-d", "--data-type",
+        dest="data_type",
+        type=str,
+        default='float32',
+        help="Set data type, e.g float32, complex64 [default=%%default]")
 
-    parser.add_option(
-        "-d", "--data-type", dest="data_type", type="string", default='float32',
-        help="Set data type, e.g float32, complex64 [default=%default]")
-
+    parser.add_argument(
+        "-f", "--filters",
+        dest="filters",
+        type=str,
+        nargs='+',
+        default='none',
+        help="Set filter type, e.g `none` for time domain, fft [default=%%default]")
 
     return parser
 
-# Get parameters
-in_params, _ = argument_parser().parse_args()
+def fft(data, fs):
+    N = len(data)
+    Y = np.fft.fft(data) / N
+    Yabs = np.abs(Y)
+    Yang = np.angle(Y)
+    F = np.fft.fftfreq(N, 1./fs)
+    Froll = np.fft.fftshift(F)
+    Yabs_roll = np.fft.fftshift(Yabs)
+    return Froll, Yabs_roll
 
-# Sample rate
-fs = in_params.samp_rate
-data_type = in_params.data_type
-input_signals = in_params.input_signals
+def high_pass(data, cutoff=200., fs=250000., order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
+    y = signal.filtfilt(b, a, data)
+    return y
 
-# Data type
-allowed_data_types = (
-    'float32',
-    'complex64',
-)
-if data_type not in allowed_data_types:
-    print('[E] Data type `{}` not allowed.'.format(data_type))
-    sys.exit(1)
+def main():
+    # Get parameters
+    in_params = argument_parser().parse_args()
 
-for sig in input_signals.split(','):
-    f = open(sig, 'rb')
-    data = np.fromfile(f, dtype=data_type)
-    t = np.arange(len(data))/fs
+    # Sample rate
+    fs = in_params.samp_rate
+    data_type = in_params.data_type
+    input_signals = in_params.input_signals
 
-    if data_type == 'complex64':
-        plt.plot(t, data.real)
-        plt.plot(t, data.imag)
-    elif data_type == 'float32':
-        plt.plot(t, data)
-plt.show()
+    # Data type
+    allowed_data_types = (
+        'float32',
+        'complex64',
+    )
+    if data_type not in allowed_data_types:
+        print('[E] Data type `{}` not allowed.'.format(data_type))
+        sys.exit(1)
+
+    for sig in input_signals:
+        f = open(sig, 'rb')
+        data = np.fromfile(f, dtype=data_type)
+        N = len(data)
+        t = np.arange(N)/fs
+
+
+        x = t
+        y = data
+        xlabel = 'Time (s)'
+        ylabel = 'Amplitude'
+        for filt in in_params.filters:
+            # if filt == 'none':
+            #     if data_type == 'complex64':
+            #         plt.plot(t, data.real)
+            #         plt.plot(t, data.imag)
+            #     elif data_type == 'float32':
+            #         plt.plot(t, data)
+            suffix = ''
+            if filt == 'fft':
+                x, y = fft(y, fs)
+                suffix += '_fft'
+                xlabel = 'Freq (Hz)'
+                ylabel = 'FFT'
+
+            elif filt.startswith('high'):
+                print('here')
+                fc_high = float(filt.split('=')[1])
+                y = high_pass(y, cutoff=fc_high,)
+                suffix += '_high'
+
+        dir_path = '/Users/fmagno/projs/sipLab/2019_oceantech/reports/tekever/img/signals/'
+        sig_name = sig.rsplit('.', 1)[0]
+        w, h = plt.figaspect(.5)
+        plt.figure(figsize=(w, h))
+
+        plt.plot(x, y)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+
+        # plt.savefig(dir_path + sig_name + suffix + '.png')
+        # plt.close()
+
+    plt.show()
+
+main()
