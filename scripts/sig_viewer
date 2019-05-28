@@ -13,6 +13,7 @@ import argparse
 from scipy import signal
 import matplotlib.pyplot as plt
 import sys
+from dsp.tools import fft, high_pass
 
 
 
@@ -51,22 +52,22 @@ def argument_parser():
 
     return parser
 
-def fft(data, fs):
-    N = len(data)
-    Y = np.fft.fft(data) / N
-    Yabs = np.abs(Y)
-    Yang = np.angle(Y)
-    F = np.fft.fftfreq(N, 1./fs)
-    Froll = np.fft.fftshift(F)
-    Yabs_roll = np.fft.fftshift(Yabs)
-    return Froll, Yabs_roll
+# def fft(data, fs):
+#     N = len(data)
+#     Y = np.fft.fft(data) / N
+#     Yabs = np.abs(Y)
+#     Yang = np.angle(Y)
+#     F = np.fft.fftfreq(N, 1./fs)
+#     Froll = np.fft.fftshift(F)
+#     Yabs_roll = np.fft.fftshift(Yabs)
+#     return Froll, Yabs_roll
 
-def high_pass(data, cutoff=200., fs=250000., order=5):
-    nyq = 0.5 * fs
-    normal_cutoff = cutoff / nyq
-    b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
-    y = signal.filtfilt(b, a, data)
-    return y
+# def high_pass(data, cutoff=200., fs=250000., order=5):
+#     nyq = 0.5 * fs
+#     normal_cutoff = cutoff / nyq
+#     b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
+#     y = signal.filtfilt(b, a, data)
+#     return y
 
 def main():
     # Get parameters
@@ -112,12 +113,12 @@ def main():
                 ylabel = 'FFT'
 
             elif filt.startswith('high'):
-                print('here')
+                # print('here')
                 fc_high = float(filt.split('=')[1])
                 y = high_pass(y, cutoff=fc_high,)
                 suffix += '_high'
 
-        dir_path = '/Users/fmagno/projs/sipLab/2019_oceantech/reports/tekever/img/signals/'
+        # dir_path = '/Users/fmagno/projs/sipLab/2019_oceantech/reports/tekever/img/signals/'
         sig_name = sig.rsplit('.', 1)[0]
         w, h = plt.figaspect(.5)
         plt.figure(figsize=(w, h))
