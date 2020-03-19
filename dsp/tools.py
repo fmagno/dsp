@@ -2,6 +2,8 @@
 import errno
 import math
 import os
+import numpy as np
+from scipy import signal
 
 
 def geom2freq(D, L, ncycles, vel_water=1498.):
@@ -42,6 +44,26 @@ def mkdir_p(dirname):
         if exc.errno != errno.EEXIST:
             raise
         pass
+
+
+def fft(data, fs):
+    """ Computes FFT """
+    N = len(data)
+    Y = np.fft.fft(data) / N
+    Yabs = np.abs(Y)
+    Yang = np.angle(Y)
+    F = np.fft.fftfreq(N, 1./fs)
+    Froll = np.fft.fftshift(F)
+    Yabs_roll = np.fft.fftshift(Yabs)
+    return Froll, Yabs_roll
+
+
+def high_pass(data, cutoff=200., fs=250000., order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
+    y = signal.filtfilt(b, a, data)
+    return y
 
 
 if __name__ == '__main__':

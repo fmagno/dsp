@@ -16,7 +16,14 @@ setup(
     author_email='flmagnom@gmail.com',
     packages=find_packages(),
     install_requires=[
+<<<<<<< HEAD
         'matplotlib==3.1.2',
+=======
+        #'matplotlib==2.1.0',
+        'scipy',
+        'mpld3',
+        'matplotlib',
+>>>>>>> c9db4807c9eb08aaee66224aac39adaaf49f19db
         'numpy==1.16.2',
         'toml==0.10.0',
         'namedlist==1.7.0',
