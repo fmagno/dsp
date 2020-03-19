@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import ast
+import cmath
+import math
+import numpy as np
+
+from optparse import OptionParser
+
+
+def argument_parser():
+    parser = OptionParser(usage="%prog: [options]")
+
+    parser.add_option(
+        "-i", "--inputs", dest="inputs", type="string", default='',
+        help="Set the inputs for the chosen operation, e.g foo.dat,bar.dat,goo.dat [default=%default]")
+
+    parser.add_option(
+        "-d", "--data-type", dest="data_type", type="string", default='complex64',
+        help="Set the numpy data type, e.g complex64, float32, etc [default=%default]")
+    
+    parser.add_option(
+        "-o", "--operation", dest="operation", type="string", default='power',
+        help="Set the operation, e.g power, snr, stat, pdb2std, ber [default=%default]")
+    
+    parser.add_option(
+        "-r", "--ratio", dest="ratio", type="float", default=1.,
+        help="Specify the portion of the signal that is not silence, e.g 0.6 if 60% is not silence [default=%default]")
+    
+    return parser
+
+
+in_params, _ = argument_parser().parse_args()
+
+
+# file name
+# inputs = ast.literal_eval(in_params.inputs)
+inputs = in_params.inputs.split(',')
+
+# data type
+data_type = in_params.data_type
+
+# operation
+operation = in_params.operation
+
+# ratio
+ratio = in_params.ratio
+
+
+if operation in ('power', 'pwr', 'p'):
+    for sig in inputs:
+        data = np.fromfile(sig, dtype=data_type)
+        p_avr = np.average(np.abs(data) ** 2) / ratio
+        p_avr_db = 10 * math.log10(p_avr)
+        # print(f'P lin of {sig}: {p_avr}')
+        print(f'Pwr of {sig}: {p_avr_db}[dB], {p_avr}[lin]')
+
+elif operation in ('snr',):
+    signal = np.fromfile(inputs[0], dtype=data_type)
+    noise = np.fromfile(inputs[1], dtype=data_type)
+
+    p_signal = np.average(np.abs(signal) ** 2) / ratio
+    p_signal_db = 10 * math.log10(p_signal)
+    p_noise = np.average(np.abs(noise) ** 2)
+    p_noise_db = 10 * math.log10(p_noise)
+
+    snr = p_signal / p_noise
+    snr_db = 10 * math.log10(p_signal / p_noise)
+    
+    print(f'Pwr of {inputs[0]}: {p_signal_db}[dB], {p_signal}[lin]')
+    print(f'Pwr of {inputs[1]}: {p_noise_db}[dB], {p_noise}[lin]')
+    print(f'SNR: {snr_db}[dB], {snr}[lin]')
+
+elif operation in ('pdb2std',):
+    std = math.sqrt(10 ** (float(inputs[0])/10.))
+    print(f'STD: {std}')
+
+elif operation in ('std2pdb',):
+    pdb = 10 * math.log10(float(inputs[0]) ** 2)
+    print(f'Pwr dB: {pdb}')
+
+elif operation in ('ber',):
+    rx = np.fromfile(inputs[1], dtype=data_type).astype('float32')
+    tx = np.fromfile(inputs[0], dtype=data_type)[:len(rx)].astype('float32')
+
+    mean = np.average(np.abs(tx - rx))
+    print(f'BER: {mean}, errors: {np.sum(np.abs(tx - rx))}, total: {len(tx)}')
+    

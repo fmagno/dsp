@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+""" """
+
+import os
+import sys
+import datetime
+
+from dsp.transmission.gr_baseband_sync_oii import gr_baseband_sync_oii
+from dsp.transmission.gr_baseband_sync_oii import main
+from optparse import OptionParser
+
+date = str(datetime.datetime.now()).split('.')[0].replace(' ', '_')
+
+#def argument_parser():
+#    parser = OptionParser(usage="%prog: [options]", option_class=eng_option)
+#    parser.add_option(
+#        "-r", "--sample-rate", dest="samp_rate", type="float", default=250000.,
+#        help="Set sample rate [default=%default]")
+
+#    parser.add_option(
+#        "-d", "--duration", dest="duration", type="int", default=0,
+#        help="Set sample rate [default=%default]")
+
+#    return parser
+
+
+
+# duration=250000+12500
+
+#duration = 625000
+#duration = 625000*24
+
+#duration = 1562500
+#duration = 1562500*10
+
+# chirp
+# duration = 1250000
+duration = int(sys.argv[2])
+if duration == 0:
+    statinfo = os.stat(sys.argv[1])
+    duration = statinfo.st_size / 4
+
+
+samp_rate=250000.
+
+out1_name = date + '_' + sys.argv[1].rsplit('.', 1)[0].rsplit('/')[-1] + '_r' + str(samp_rate) + '_d' + str(duration) + '_ch1.dat'
+out2_name = date + '_' + sys.argv[1].rsplit('.', 1)[0].rsplit('/')[-1] + '_r' + str(samp_rate) + '_d' + str(duration) + '_ch2.dat'
+
+tb = gr_baseband_sync_oii(
+    amplitude_calibration=1.,
+    duration=duration,
+    rx_ip='192.168.5.101',
+    tx_ip='192.168.5.100',
+    samp_rate=samp_rate,
+    sig_in=sys.argv[1],
+    sig_out_ch1=out1_name,
+    sig_out_ch2=out2_name,
+)
+tb.start()
+tb.wait()

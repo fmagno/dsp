@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+""" """
+
+import os
+import sys
+import datetime
+import numpy as np
+
+from dsp.transmission_gr38.gr_baseband_sync_oii import gr_baseband_sync_oii
+from dsp.transmission_gr38.gr_baseband_sync_oii import main
+from optparse import OptionParser
+
+sig_in = sys.argv[1]                        # -
+duration = int(sys.argv[2])                 # 0 (auto)
+amplitude_calibration = float(sys.argv[3])  # 1.
+dtype = sys.argv[4]                         # 'float32', 'complex64'
+samp_rate = float(sys.argv[5])              # 250000.
+tx_ip = str(sys.argv[6])                    # 192.168.5.100
+rx_ip = str(sys.argv[7])                    # 192.168.5.101
+
+
+date = str(datetime.datetime.now()).split('.')[0].replace(' ', '_')
+
+if duration == 0:
+    with open(sig_in, 'rb') as fd:
+        duration = len(np.fromfile(fd, dtype=dtype))
+        print(f'duration: {duration}')
+
+out1_name = date + '_' + sig_in.rsplit('.', 1)[0].rsplit('/')[-1] + '_r' + str(samp_rate) + '_d' + str(duration) + '_ch1.dat'
+out2_name = date + '_' + sig_in.rsplit('.', 1)[0].rsplit('/')[-1] + '_r' + str(samp_rate) + '_d' + str(duration) + '_ch2.dat'
+
+tb = gr_baseband_sync_oii(
+    amplitude_calibration=amplitude_calibration,
+    duration=duration,
+    rx_ip=rx_ip,
+    tx_ip=tx_ip,
+    samp_rate=samp_rate,
+    sig_in=sig_in,
+    sig_out_ch1=out1_name,
+    sig_out_ch2=out2_name,
+)
+tb.start()
+tb.wait()

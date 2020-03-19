@@ -1,0 +1,49 @@
+id: red_pitaya_sink_xx
+label: Red Pitaya Sink
+category: '[fm]'
+documentation: Red Pitaya documentation
+file_format: 1
+
+templates:
+  imports: import red_pitaya
+  make: red_pitaya.sink(addr=${addr},port=${port},freq=${freq},rate=${rate},corr=${corr},ptt=${ptt})
+  callbacks:
+  - set_freq(${freq}, ${corr})
+  - set_rate(${rate})
+  - set_ptt(${ptt})
+
+parameters:
+- id: addr
+  label: Address
+  dtype: string
+  default: 192.168.1.100
+
+- id: port
+  label: Port
+  dtype: int
+  default: 1001
+
+- id: freq
+  label: Center frequency
+  dtype: real
+  default: 600000
+
+- id: rate
+  label: Sample rate
+  dtype: int
+  default: 100000
+
+- id: corr
+  label: Freq correction ppm
+  dtype: real
+  default: 0
+
+- id: ptt
+  label: Push to talk
+  dtype: bool
+  default: False
+
+inputs:
+- label: in
+  domain: stream
+  dtype: complex

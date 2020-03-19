@@ -16,7 +16,7 @@ setup(
     author_email='flmagnom@gmail.com',
     packages=find_packages(),
     install_requires=[
-        'matplotlib==2.1.0',
+        'matplotlib==3.1.2',
         'numpy==1.16.2',
         'toml==0.10.0',
         'namedlist==1.7.0',
@@ -28,5 +28,9 @@ setup(
         'scripts/run_campaign',
         'scripts/baseband_async_oii',
         'scripts/passband_async_oi',
+        'scripts/baseband_sync_oii_manual',
+        'scripts/bandpass_async_oii_gr38_manual',
+        'scripts/baseband_sync_oii_gr38_manual',
+        'scripts/sig_calc',
     ]
 )

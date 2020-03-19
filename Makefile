@@ -4,8 +4,8 @@
 install:
 	python setup.py install && \
 	rm -rf dist/ build/ dsp.egg-info/
-	mkdir -p vendor && \
-	git clone https://github.com/pavel-demin/red-pitaya-notes.git vendor/red-pitaya-notes
+	# mkdir -p vendor && \
+	# git clone https://github.com/pavel-demin/red-pitaya-notes.git vendor/red-pitaya-notes
 
 
 .PHONY: uninstall

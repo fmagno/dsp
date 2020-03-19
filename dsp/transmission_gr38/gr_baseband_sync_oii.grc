@@ -1,0 +1,412 @@
+options:
+  parameters:
+    author: ''
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: no_gui
+    hier_block_src_path: '.:'
+    id: gr_baseband_sync_oii
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: run
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: ''
+    window_size: 2000,2000
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: center_freq
+  id: variable
+  parameters:
+    comment: ''
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 452.0]
+    rotation: 0
+    state: enabled
+- name: freq_correction
+  id: variable
+  parameters:
+    comment: ''
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [104, 452.0]
+    rotation: 0
+    state: enabled
+- name: amplitude_calibration
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: amplitude calibration factor
+    short_id: y
+    type: eng_float
+    value: '3.7929649'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [128, 516.0]
+    rotation: 0
+    state: enabled
+- name: analog_const_source_x_0
+  id: analog_const_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    const: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: float
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [144, 132]
+    rotation: 0
+    state: enabled
+- name: blocks_complex_to_float_0
+  id: blocks_complex_to_float
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [576, 304]
+    rotation: 0
+    state: enabled
+- name: blocks_file_sink_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: OUTPUT SIGNAL CH1
+    file: sig_out_ch1
+    type: float
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [880, 288]
+    rotation: 0
+    state: enabled
+- name: blocks_file_sink_0_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: OUTPUT SIGNAL CH2
+    file: sig_out_ch2
+    type: float
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [880, 392]
+    rotation: 0
+    state: enabled
+- name: blocks_file_source_0
+  id: blocks_file_source
+  parameters:
+    affinity: ''
+    alias: ''
+    begin_tag: pmt.PMT_NIL
+    comment: INPUT SIGNAL
+    file: sig_in
+    length: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    repeat: 'False'
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 88]
+    rotation: 0
+    state: enabled
+- name: blocks_float_to_complex_0
+  id: blocks_float_to_complex
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [336, 104]
+    rotation: 0
+    state: enabled
+- name: blocks_head_0_0
+  id: blocks_head
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: EXEC DURATION
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: duration
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [224, 316]
+    rotation: 0
+    state: enabled
+- name: blocks_head_0_0_1
+  id: blocks_head
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: EXEC DURATION
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: duration
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [552, 116]
+    rotation: 0
+    state: enabled
+- name: blocks_multiply_const_vxx_0
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'AMPLITUDE CALIBRATION
+
+      FACTOR'
+    const: amplitude_calibration
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [416, 316]
+    rotation: 0
+    state: enabled
+- name: duration
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: duration
+    short_id: d
+    type: intx
+    value: '250000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [696, 516.0]
+    rotation: 0
+    state: enabled
+- name: red_pitaya_wide_sink_xx_0
+  id: red_pitaya_wide_sink_xx
+  parameters:
+    addr: tx_ip
+    affinity: ''
+    alias: ''
+    comment: ''
+    corr: '0'
+    freq: center_freq
+    mask: '3'
+    port: '1001'
+    ptt: 'True'
+    rate: samp_rate
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [856, 68.0]
+    rotation: 0
+    state: true
+- name: red_pitaya_wide_source_xx_0
+  id: red_pitaya_wide_source_xx
+  parameters:
+    addr: rx_ip
+    affinity: ''
+    alias: ''
+    comment: ''
+    corr: '0'
+    freq: center_freq
+    mask: '3'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    port: '1001'
+    rate: samp_rate
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 276.0]
+    rotation: 0
+    state: true
+- name: rx_ip
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: rp reception ip
+    short_id: w
+    type: ''
+    value: '''192.168.5.101'''
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [296, 612.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: sample rate
+    short_id: r
+    type: eng_float
+    value: '250000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 516]
+    rotation: 0
+    state: enabled
+- name: sig_in
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: signal in
+    short_id: i
+    type: ''
+    value: '"./in.dat"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [432, 516.0]
+    rotation: 0
+    state: enabled
+- name: sig_out_ch1
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: signal output channel 1
+    short_id: o
+    type: ''
+    value: '"./r250000_ch1.dat"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [536, 516.0]
+    rotation: 0
+    state: enabled
+- name: sig_out_ch2
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: signal output channel 2
+    short_id: l
+    type: ''
+    value: '"./r250000_ch2.dat"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [536, 612.0]
+    rotation: 0
+    state: enabled
+- name: tx_ip
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: rp transmission ip
+    short_id: t
+    type: ''
+    value: '''192.168.5.100'''
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [296, 516.0]
+    rotation: 0
+    state: enabled
+
+connections:
+- [analog_const_source_x_0, '0', blocks_float_to_complex_0, '1']
+- [blocks_complex_to_float_0, '0', blocks_file_sink_0, '0']
+- [blocks_complex_to_float_0, '1', blocks_file_sink_0_0, '0']
+- [blocks_file_source_0, '0', blocks_float_to_complex_0, '0']
+- [blocks_float_to_complex_0, '0', blocks_head_0_0_1, '0']
+- [blocks_head_0_0, '0', blocks_multiply_const_vxx_0, '0']
+- [blocks_head_0_0_1, '0', red_pitaya_wide_sink_xx_0, '0']
+- [blocks_multiply_const_vxx_0, '0', blocks_complex_to_float_0, '0']
+- [red_pitaya_wide_source_xx_0, '0', blocks_head_0_0, '0']
+
+metadata:
+  file_format: 1

@@ -9,8 +9,27 @@ if platform.system() == 'Darwin':
 
 import numpy as np
 from optparse import OptionParser
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import sys
+import ast
+
+
+mpl.rcParams['agg.path.chunksize'] = 10000 # cope with large files
+
+plt.switch_backend('QT4Agg') #default on my system
+figManager = plt.get_current_fig_manager()
+figManager.window.showMaximized()
+
+def make_slice(expr):
+    def to_piece(s):
+        return s and int(s) or None
+    pieces = list(map(to_piece, expr.split(':')))
+    if len(pieces) == 1:
+        return slice(pieces[0], pieces[0] + 1)
+    else:
+        return slice(*pieces)
+
 
 def argument_parser():
     parser = OptionParser(usage="%prog: [options]")
@@ -27,6 +46,37 @@ def argument_parser():
         "-d", "--data-type", dest="data_type", type="string", default='float32',
         help="Set data type, e.g float32, complex64 [default=%default]")
 
+    parser.add_option(
+        "-x", "--x-axis", dest="x_axis", type="string", default='sample',
+        help="Set x axis units, e.g sample, time [default=%default]")
+
+    parser.add_option(
+        "-m", "--marker", dest="marker", type="string", default='',
+        help="Set line markers, e.g '', 'o-', etc [default=%default]")
+    
+    parser.add_option(
+        "-s", "--skip-head", dest="skip_head", type="string", default='',
+        help="Remove first Nm samples of the input signals, e.g '100,150' [default=%default]")
+    
+    parser.add_option(
+        "-e", "--error", dest="error", type="string", default='',
+        help="Generate and plot the error signal given the indices of the chosen signals [default=%default]")
+    
+    parser.add_option(
+        "-t", "--interpolate", dest="interpolate", type="string", default='',
+        help="Interpolates by L the selected input signals, e.g L=4: 4,0,1 [default=%default]")
+
+    parser.add_option(
+        "-l", "--slice", dest="slice", type="string", default='0:',
+        help="Python slice in samples, e.g '0:', '100:200' [default=%default]")
+
+    parser.add_option(
+        "-g", "--gain", dest="gain", type="string", default='',
+        help="Apply individual gains [default=%default]")
+
+    parser.add_option(
+        "-n", "--notes", dest="notes", type="string", default='',
+        help="Plot text index separated by 'x' samples at position 'y' in the vertical axis, e.g '1000,1.0' [default=%default]")
 
     return parser
 
@@ -42,19 +92,131 @@ input_signals = in_params.input_signals
 allowed_data_types = (
     'float32',
     'complex64',
+    'uint8',
 )
-if data_type not in allowed_data_types:
-    print('[E] Data type `{}` not allowed.'.format(data_type))
-    sys.exit(1)
 
-for sig in input_signals.split(','):
+# X axis
+x_axis = in_params.x_axis
+
+# marker
+marker = in_params.marker
+
+# interpolate
+interpolate = in_params.interpolate
+Ls = [1]*len(input_signals.split(','))
+# interp_idxs = []
+if interpolate:
+    # Ls = ast.literal_eval(interpolate)
+    Ls = list(map(int, interpolate.split(',')))
+
+# skip head
+skip_head = in_params.skip_head
+skip_heads = [0] * len(input_signals.split(','))
+# breakpoint()
+if skip_head:
+    _skip_heads = skip_head.split(',')
+    skip_heads = list(map(int, _skip_heads))
+
+# error
+error = in_params.error
+err_sigs = []
+if error:
+    err_idxs = list(map(int, error.split(',')))
+
+# slice
+_slice = in_params.slice
+slc = make_slice(_slice)
+
+# gain
+gain = in_params.gain
+gains = [1.]*len(input_signals.split(','))
+if gain:
+    gains = gain.split(',')
+    gains = list(map(float, gains))
+
+# index step
+notes = in_params.notes
+if notes:
+    notes_x = int(notes.split(',')[0])
+    notes_y = float(notes.split(',')[1])
+
+
+# if data_type not in allowed_data_types:
+#     print('[E] Data type `{}` not allowed.'.format(data_type))
+#     sys.exit(1)
+
+for i, sig in enumerate(input_signals.split(',')):
     f = open(sig, 'rb')
-    data = np.fromfile(f, dtype=data_type)
-    t = np.arange(len(data))/fs
+    _data = np.fromfile(f, dtype=data_type)
+    _t = np.arange(len(_data))
 
+    print(f'len({sig}) = {len(_data)}')
+
+    _data_int = np.zeros(len(_data)*Ls[i], dtype='complex64')
+    _data_int[::Ls[i]] = _data
+    _t_int = np.arange(len(_data_int))
+
+    data_skipped = _data_int[skip_heads[i]:]
+    t_skipped = _t_int[:(len(_t_int)-skip_heads[i])]
+    
+
+    # sample or time
+    if x_axis == 'sample':
+        # x = range(len(t))
+        x = t_skipped
+    else:
+        # x = t
+        x = t_skipped/Ls[i]/fs
+    y = data_skipped
+
+    # apply slice
+    x = x[slc]
+    y = y[slc]
+
+    # apply gain
+    y = y*gains[i]
+    
+    # data type
     if data_type == 'complex64':
-        plt.plot(t, data.real)
-        plt.plot(t, data.imag)
-    elif data_type == 'float32':
-        plt.plot(t, data)
+        # plt.plot(t, data.real)
+        # plt.plot(t, data.imag)
+
+        plt.plot(x, y.real, marker, label=f'{sig} (real)')
+        plt.plot(x, y.imag, marker, label=f'{sig} (imag)')
+    # elif data_type == 'float32':
+    else:
+        # plt.plot(t, data)
+        plt.plot(x, y, marker, label=f'{sig}')
+    
+    if error and (i in err_idxs):
+        err_sigs += [y]
+
+# if data_type == 'complex64':
+#     plt.plot(x, y.)
+
+if err_sigs:
+    min_len_err = min(len(err_sigs[0]), len(err_sigs[1]))
+    y_err = np.absolute(err_sigs[0][:min_len_err] - err_sigs[1][:min_len_err])**2
+    # y_err = np.abs(err_sigs[0][:min_len_err]) * np.abs(err_sigs[1][:min_len_err])
+    # y_err = np.absolute(np.absolute(err_sigs[0][:min_len_err]) - np.absolute(err_sigs[1][:min_len_err]))**2
+    x_err = x[:min_len_err]
+
+
+    ## TMP  ####################################
+    # y_err = np.abs(err_sigs[1][:min_len_err])
+    ############################################
+
+
+
+    plt.plot(x_err, y_err, label='err')
+
+count = 0
+if notes:
+    while count*notes_x < len(x):
+        plt.text(count * notes_x, notes_y, f'#{count:02d}')
+        count += 1
+
+plt.legend(loc=1)
 plt.show()
+
+

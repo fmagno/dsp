@@ -1,14 +1,11 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-#
-# SPDX-License-Identifier: GPL-3.0
-#
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Gr Chirp F
-# Generated: Tue May  7 17:32:07 2019
-# GNU Radio version: 3.7.12.0
+# Generated: Wed May  8 15:24:17 2019
 ##################################################
+
 
 from gnuradio import analog
 from gnuradio import blocks
@@ -44,9 +41,7 @@ class gr_chirp_f(gr.top_block):
         self.blocks_vco_f_0 = blocks.vco_f(samp_rate, sens, 1)
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_float*1, samp_rate,True)
         self.blocks_multiply_xx_0 = blocks.multiply_vff(1)
-        self.blocks_file_sink_1 = blocks.file_sink(gr.sizeof_float*1, '/Users/fmagno/projs/sipLab/2019_oceantech/campaigns/2019.04.15/dsp_ws/saw.dat', False)
-        self.blocks_file_sink_1.set_unbuffered(False)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_float*1, '/Users/fmagno/projs/sipLab/2019_oceantech/campaigns/2019.04.15/dsp_ws/chirp.dat', False)
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_float*1, '/home/siplab/proj/dsp_ws/cpn_faro/tekever/signals/chirp/chirp.dat', False)
         self.blocks_file_sink_0.set_unbuffered(False)
         self.blocks_delay_0 = blocks.delay(gr.sizeof_float*1, samp_rate/2)
         self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_SAW_WAVE, 1, 1, 0)
@@ -57,7 +52,6 @@ class gr_chirp_f(gr.top_block):
         # Connections
         ##################################################
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_delay_0, 0))
-        self.connect((self.blocks_delay_0, 0), (self.blocks_file_sink_1, 0))
         self.connect((self.blocks_delay_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.blocks_vco_f_0, 0))
